@@ -7,7 +7,7 @@
 #include "simplex_generator.h"
 #include "simplex_noise.h"
 
-main_menu_activity::main_menu_activity(std::shared_ptr<activity> transition, int max_x, int max_y) : activity(max_x, max_y) {
+automata::activities::main_menu_activity::main_menu_activity(std::shared_ptr<activity> transition, int max_x, int max_y) : activity(max_x, max_y) {
 	this->transition = transition;
 	cloud_movement_offset = (max_x / 4);
 	cloud_gen_offset = 0;
@@ -19,13 +19,13 @@ main_menu_activity::main_menu_activity(std::shared_ptr<activity> transition, int
 	std::mt19937 rng;
 	rng.seed(std::random_device()());
 	std::uniform_int_distribution<std::mt19937::result_type> distribution(0,std::numeric_limits<int>::max());
-	cloud_left_generator = simplex_noise(distribution(rng));
-	cloud_right_generator = simplex_noise(distribution(rng));
+	cloud_left_generator = worldgen::simplex_noise(distribution(rng));
+	cloud_right_generator = worldgen::simplex_noise(distribution(rng));
 
 	color_map = {{'.', 5},{'^', 6}, {' ', 4}, {'o', 2}, {',', 7}, {';',8}, {'+',10}, {'~',9}, {'*',11}}; //{'~', 4}
 }
 
-void main_menu_activity::start(std::shared_ptr<activity_observer> observer) {
+void automata::activities::main_menu_activity::start(std::shared_ptr<activity_observer> observer) {
 	this->observer = observer;
 	this->observer->set_current_activity(shared_from_this());
 	
@@ -36,11 +36,11 @@ void main_menu_activity::start(std::shared_ptr<activity_observer> observer) {
 	redraw();
 }
 
-void main_menu_activity::redraw() {
+void automata::activities::main_menu_activity::redraw() {
 	clear();
 }
 
-void main_menu_activity::update() {
+void automata::activities::main_menu_activity::update() {
 	if (max_x - cloud_movement_offset >= 0) {
 		clear();
 		for (int y_screen = 0, y = island_offset_y;y_screen < max_y;y_screen++, y++) {
@@ -79,10 +79,10 @@ void main_menu_activity::update() {
 	}
 }
 
-void main_menu_activity::send_key_event(int) {
+void automata::activities::main_menu_activity::send_key_event(int) {
 	observer->start_activity(std::make_shared<local_map_activity>(max_x, max_y),transition,observer);
 }
 
-void main_menu_activity::destroy() {
+void automata::activities::main_menu_activity::destroy() {
 	observer = NULL;
 }

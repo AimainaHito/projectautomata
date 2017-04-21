@@ -1,6 +1,6 @@
 #include "menu_window.h"
 
-menu::menu(int start_x,int start_y,int width,int height,std::vector<std::string> entries) {
+automata::menu::menu(int start_x,int start_y,int width,int height,std::vector<std::string> entries) {
 	win = newwin(width,height,start_x,start_y);
 	index = 0;
 
@@ -13,11 +13,11 @@ menu::menu(int start_x,int start_y,int width,int height,std::vector<std::string>
 	this->entries = entries;
 }
 
-menu::~menu() {
+automata::menu::~menu() {
 	delwin(win);
 }
 
-bool menu::up() {
+bool automata::menu::up() {
 	if (index < (entries.size() - 1)) {
 		index++;
 		return true;
@@ -25,7 +25,7 @@ bool menu::up() {
 	return false;
 }
 
-bool menu::down() {
+bool automata::menu::down() {
 	if (index > 0) {
 		index--;
 		return true;
@@ -33,10 +33,10 @@ bool menu::down() {
 	return false;
 }
 
-unsigned int menu::get_index() {
+unsigned int automata::menu::get_index() {
 	return index;
 }
 
-void menu::clear() {
+void automata::menu::clear() {
 	wclear(win);
 }

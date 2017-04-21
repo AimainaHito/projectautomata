@@ -12,10 +12,10 @@
 #include "simplex_generator.h"
 
 
-void worldgen::cloud_generator::initialize() {
+void automata::worldgen::cloud_generator::initialize() {
 	//std::bernoulli_distribution distribution(0.5);
-	simplex_noise humidity_generator(200);
-	simplex_noise transition_generator(500);
+	worldgen::simplex_noise humidity_generator(200);
+	worldgen::simplex_noise transition_generator(500);
 
 	//initialize clouds to 0
 	for (int y = 0;y < height;y++) {
@@ -39,7 +39,7 @@ void worldgen::cloud_generator::initialize() {
 	}
 }
 
-worldgen::cloud_generator::cloud_generator(int width, int height, int smoothing_radius) : width(width), height(height) {
+automata::worldgen::cloud_generator::cloud_generator(int width, int height, int smoothing_radius) : width(width), height(height) {
 	transition = std::vector<std::vector<bool>>(height);
 	humidity = std::vector<std::vector<bool>>(height);
 	cloud_weights = std::vector<std::vector<int>>(height);
@@ -56,14 +56,14 @@ worldgen::cloud_generator::cloud_generator(int width, int height, int smoothing_
 	initialize();
 }
 
-bool worldgen::cloud_generator::cell_transitions(int x, int y) {
+bool automata::worldgen::cloud_generator::cell_transitions(int x, int y) {
 	return (x < (width - 1) && (transition[y][x + 1] || (x < (width - 2) && transition[y][x + 2])))
 		|| (y < (height - 1) && (transition[y + 1][x] || (y < (height - 2) && transition[y + 2][x])))
 		|| (x > 0 && (transition[y][x - 1] || (x > 1 && transition[y][x - 2])))
 		|| (y > 0 && (transition[y - 1][x] || (y > 1 && transition[y - 2][x])));
 }
 
-std::vector<std::vector<char>> worldgen::cloud_generator::get_cloud() const {
+std::vector<std::vector<char>> automata::worldgen::cloud_generator::get_cloud() const {
 	std::vector<std::vector<char>> cloud(height);
 	for (int y = 0;y < height;y++) {
 		cloud[y] = std::vector<char>(width);
@@ -87,7 +87,7 @@ std::vector<std::vector<char>> worldgen::cloud_generator::get_cloud() const {
 	return cloud;
 }
 
-void worldgen::cloud_generator::simulate() {
+void automata::worldgen::cloud_generator::simulate() {
 	cloud[(time + 1) % 3] = std::vector<std::vector<bool>>(height);
 	for (int y = 0;y < height;y++) {
 		cloud[(time + 1) % 3][y] = std::vector<bool>(width);
@@ -129,8 +129,8 @@ void worldgen::cloud_generator::simulate() {
 /*
  * Creates a 3D cloud with depth equal to height for rotation over a 2d plane
  */
-std::vector<std::vector<std::vector<char>>> worldgen::generate_cloud3d(
-		const int width, const int height, const simplex_noise& generator, const double offset) {
+std::vector<std::vector<std::vector<char>>> automata::worldgen::generate_cloud3d(
+		const int width, const int height, const worldgen::simplex_noise& generator, const double offset) {
 
 	const float width_to_center = std::min(width, height);
 	const int center_y = (height / 2) - 1;
@@ -148,7 +148,7 @@ std::vector<std::vector<std::vector<char>>> worldgen::generate_cloud3d(
 			for (int x = 0;x < width;x++) {
 				int noise = generator.scaled_octave_noise_3d(
 					octaves,0.5,scale_factor,
-					worldgen::min_value,worldgen::max_value,
+					worldgen::noise_min_value,worldgen::noise_max_value,
 					((double) x / width) + offset,((double) y / height) + offset,((double ) z / height) + offset
 				);
 
@@ -158,7 +158,7 @@ std::vector<std::vector<std::vector<char>>> worldgen::generate_cloud3d(
 				//euclidean distance:
 				double distance_from_center = sqrt(((center_x - x) * (center_x - x)) + ((center_y - y) * (center_y - y))) / width_to_center;
 
-				double mask = (int) (noise - (distance_from_center * worldgen::max_value));
+				double mask = (int) (noise - (distance_from_center * worldgen::noise_max_value));
 
 				char terrain;
 
@@ -183,8 +183,8 @@ std::vector<std::vector<std::vector<char>>> worldgen::generate_cloud3d(
 	return cloud_map;
 }
 
-std::vector<std::vector<char>> worldgen::generate_cloud2d(
-		const int width, const int height, const simplex_noise& generator, const double offset) {
+std::vector<std::vector<char>> automata::worldgen::generate_cloud2d(
+		const int width, const int height, const worldgen::simplex_noise& generator, const double offset) {
 
 	const float width_to_center = std::min(width, height);
 	const int center_y = (height / 2) - 1;
@@ -200,7 +200,7 @@ std::vector<std::vector<char>> worldgen::generate_cloud2d(
 		for (int x = 0;x < width;x++) {
 			int noise = generator.scaled_octave_noise_2d(
 				octaves,0.5,scale_factor,
-				worldgen::min_value,worldgen::max_value,
+				worldgen::noise_min_value,worldgen::noise_max_value,
 				((double) x / width) + offset,((double) y / height) + offset
 			);
 
@@ -209,7 +209,7 @@ std::vector<std::vector<char>> worldgen::generate_cloud2d(
 			//euclidean distance:
 			double distance_from_center = sqrt(((center_x - x) * (center_x - x)) + ((center_y - y) * (center_y - y))) / width_to_center;
 
-			double mask = (int) (noise - (distance_from_center * worldgen::max_value));
+			double mask = (int) (noise - (distance_from_center * worldgen::noise_max_value));
 
 			char terrain;
 
@@ -233,7 +233,7 @@ std::vector<std::vector<char>> worldgen::generate_cloud2d(
 	return cloud_map;
 }
 
-std::vector<std::vector<char>> worldgen::generate_island(const int width, const int height) {
+std::vector<std::vector<char>> automata::worldgen::generate_island(const int width, const int height) {
 	const float width_to_center = std::min(width, height);
 	const double edge_multiplier = 1.6; //1.8 for manhatten
 	const double scale_factor = 2.2; //2.2
@@ -250,7 +250,7 @@ std::vector<std::vector<char>> worldgen::generate_island(const int width, const 
 		
 	int seed = distribution(rng);//debug seed: 968258021
 	rng.seed(seed);
-	simplex_noise generator = simplex_noise(seed);
+	worldgen::simplex_noise generator = worldgen::simplex_noise(seed);
 
 	std::vector<std::vector<char>> map = std::vector<std::vector<char>>(height);
 	std::uniform_int_distribution<std::mt19937::result_type> grass_distribution(40,70);
@@ -260,7 +260,7 @@ std::vector<std::vector<char>> worldgen::generate_island(const int width, const 
 		map[y] = std::vector<char>(width);
 		for (int x = 0;x < width;x++) {
 			int noise = generator.scaled_octave_noise_2d(
-				octaves,0.5,scale_factor,worldgen::min_value,worldgen::max_value,(double) x / width,(double) y / height
+				octaves,0.5,scale_factor,worldgen::noise_min_value,worldgen::noise_max_value,(double) x / width,(double) y / height
 			);
 
 			//manhatten distance:
@@ -268,7 +268,7 @@ std::vector<std::vector<char>> worldgen::generate_island(const int width, const 
 			//euclidean distance:
 			double distance_from_center = sqrt(((center_x - x) * (center_x - x)) + ((center_y - y) * (center_y - y))) / width_to_center;
 
-			double mask = (int) (noise - (edge_multiplier * (distance_from_center * worldgen::max_value)));
+			double mask = (int) (noise - (edge_multiplier * (distance_from_center * worldgen::noise_max_value)));
 			
 			char terrain;
 			//int r = 0;
@@ -332,7 +332,7 @@ std::vector<std::vector<char>> worldgen::generate_island(const int width, const 
 	return map;
 }
 
-std::vector<std::vector<char>> worldgen::fit_to_bounds(const std::vector<std::vector<char>>& map) {
+std::vector<std::vector<char>> automata::worldgen::fit_to_bounds(const std::vector<std::vector<char>>& map) {
 	unsigned int x_min = map[0].size();
 	unsigned int x_max = 0;
 	unsigned int y_min = map.size();
@@ -372,7 +372,7 @@ std::vector<std::vector<char>> worldgen::fit_to_bounds(const std::vector<std::ve
 	return new_map;
 }
 
-void worldgen::write_map(const std::vector<std::vector<char>>& map,const std::string& filename) {
+void automata::worldgen::write_map(const std::vector<std::vector<char>>& map,const std::string& filename) {
 	std::ofstream outfile(filename);
 	
 	for (std::vector<char> row : map) {

@@ -45,134 +45,138 @@ dimension, you can ensure that each gets a unique noise value and they don't
 all look identical.
 */
 
-class simplex_noise {
-	private:
-		int fastfloor(const float x) const;
+namespace automata {
+namespace worldgen {
 
-		float dot(const int* g, const float x, const float y) const;
-		float dot(const int* g, const float x, const float y, const float z) const;
-		float dot(const int* g, const float x, const float y, const float z, const float w) const;
+	class simplex_noise {
+		private:
+			int fastfloor(const float x) const;
 
-
-		// The gradients are the midpoints of the vertices of a cube.
-		static constexpr int grad3[12][3] = {
-		    {1,1,0}, {-1,1,0}, {1,-1,0}, {-1,-1,0},
-		    {1,0,1}, {-1,0,1}, {1,0,-1}, {-1,0,-1},
-		    {0,1,1}, {0,-1,1}, {0,1,-1}, {0,-1,-1}
-		};
+			float dot(const int* g, const float x, const float y) const;
+			float dot(const int* g, const float x, const float y, const float z) const;
+			float dot(const int* g, const float x, const float y, const float z, const float w) const;
 
 
-		// The gradients are the midpoints of the vertices of a hypercube.
-		static constexpr int grad4[32][4]= {
-		    {0,1,1,1},  {0,1,1,-1},  {0,1,-1,1},  {0,1,-1,-1},
-		    {0,-1,1,1}, {0,-1,1,-1}, {0,-1,-1,1}, {0,-1,-1,-1},
-		    {1,0,1,1},  {1,0,1,-1},  {1,0,-1,1},  {1,0,-1,-1},
-		    {-1,0,1,1}, {-1,0,1,-1}, {-1,0,-1,1}, {-1,0,-1,-1},
-		    {1,1,0,1},  {1,1,0,-1},  {1,-1,0,1},  {1,-1,0,-1},
-		    {-1,1,0,1}, {-1,1,0,-1}, {-1,-1,0,1}, {-1,-1,0,-1},
-		    {1,1,1,0},  {1,1,-1,0},  {1,-1,1,0},  {1,-1,-1,0},
-		    {-1,1,1,0}, {-1,1,-1,0}, {-1,-1,1,0}, {-1,-1,-1,0}
-		};
-
-		// A lookup table to traverse the simplex around a given point in 4D.
-		static constexpr int simplex[64][4] = {
-		    {0,1,2,3},{0,1,3,2},{0,0,0,0},{0,2,3,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,2,3,0},
-		    {0,2,1,3},{0,0,0,0},{0,3,1,2},{0,3,2,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,3,2,0},
-		    {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-		    {1,2,0,3},{0,0,0,0},{1,3,0,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,3,0,1},{2,3,1,0},
-		    {1,0,2,3},{1,0,3,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,0,3,1},{0,0,0,0},{2,1,3,0},
-		    {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
-		    {2,0,1,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,0,1,2},{3,0,2,1},{0,0,0,0},{3,1,2,0},
-		    {2,1,0,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,1,0,2},{0,0,0,0},{3,2,0,1},{3,2,1,0}
-		};
-
-		int perm[512];
-		int seed;
-		std::mt19937 rng;
-
-	public:
-		simplex_noise() = default;
-		simplex_noise(int seed);
-
-		void generate_permutations(int seed);
-
-		int get_seed() const;
-
-		// Multi-octave Simplex noise
-		// For each octave, a higher frequency/lower amplitude function will be added to the original.
-		// The higher the persistence [0-1], the more of each succeeding octave will be added.
-		float octave_noise_2d(const float octaves,
-				    const float persistence,
-				    const float scale,
-				    const float x,
-				    const float y) const;
-		float octave_noise_3d(const float octaves,
-				    const float persistence,
-				    const float scale,
-				    const float x,
-				    const float y,
-				    const float z) const;
-		float octave_noise_4d(const float octaves,
-				    const float persistence,
-				    const float scale,
-				    const float x,
-				    const float y,
-				    const float z,
-				    const float w) const;
+			// The gradients are the midpoints of the vertices of a cube.
+			static constexpr int grad3[12][3] = {
+			    {1,1,0}, {-1,1,0}, {1,-1,0}, {-1,-1,0},
+			    {1,0,1}, {-1,0,1}, {1,0,-1}, {-1,0,-1},
+			    {0,1,1}, {0,-1,1}, {0,1,-1}, {0,-1,-1}
+			};
 
 
-		// Scaled Multi-octave Simplex noise
-		// The result will be between the two parameters passed.
-		float scaled_octave_noise_2d(  const float octaves,
+			// The gradients are the midpoints of the vertices of a hypercube.
+			static constexpr int grad4[32][4]= {
+			    {0,1,1,1},  {0,1,1,-1},  {0,1,-1,1},  {0,1,-1,-1},
+			    {0,-1,1,1}, {0,-1,1,-1}, {0,-1,-1,1}, {0,-1,-1,-1},
+			    {1,0,1,1},  {1,0,1,-1},  {1,0,-1,1},  {1,0,-1,-1},
+			    {-1,0,1,1}, {-1,0,1,-1}, {-1,0,-1,1}, {-1,0,-1,-1},
+			    {1,1,0,1},  {1,1,0,-1},  {1,-1,0,1},  {1,-1,0,-1},
+			    {-1,1,0,1}, {-1,1,0,-1}, {-1,-1,0,1}, {-1,-1,0,-1},
+			    {1,1,1,0},  {1,1,-1,0},  {1,-1,1,0},  {1,-1,-1,0},
+			    {-1,1,1,0}, {-1,1,-1,0}, {-1,-1,1,0}, {-1,-1,-1,0}
+			};
+
+			// A lookup table to traverse the simplex around a given point in 4D.
+			static constexpr int simplex[64][4] = {
+			    {0,1,2,3},{0,1,3,2},{0,0,0,0},{0,2,3,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,2,3,0},
+			    {0,2,1,3},{0,0,0,0},{0,3,1,2},{0,3,2,1},{0,0,0,0},{0,0,0,0},{0,0,0,0},{1,3,2,0},
+			    {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
+			    {1,2,0,3},{0,0,0,0},{1,3,0,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,3,0,1},{2,3,1,0},
+			    {1,0,2,3},{1,0,3,2},{0,0,0,0},{0,0,0,0},{0,0,0,0},{2,0,3,1},{0,0,0,0},{2,1,3,0},
+			    {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},
+			    {2,0,1,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,0,1,2},{3,0,2,1},{0,0,0,0},{3,1,2,0},
+			    {2,1,0,3},{0,0,0,0},{0,0,0,0},{0,0,0,0},{3,1,0,2},{0,0,0,0},{3,2,0,1},{3,2,1,0}
+			};
+
+			int perm[512];
+			int seed;
+			std::mt19937 rng;
+
+		public:
+			simplex_noise() = default;
+			simplex_noise(int seed);
+
+			void generate_permutations(int seed);
+
+			int get_seed() const;
+
+			// Multi-octave Simplex noise
+			// For each octave, a higher frequency/lower amplitude function will be added to the original.
+			// The higher the persistence [0-1], the more of each succeeding octave will be added.
+			float octave_noise_2d(const float octaves,
 					    const float persistence,
 					    const float scale,
-					    const float loBound,
-					    const float hiBound,
 					    const float x,
 					    const float y) const;
-		float scaled_octave_noise_3d(  const float octaves,
+			float octave_noise_3d(const float octaves,
 					    const float persistence,
 					    const float scale,
-					    const float loBound,
-					    const float hiBound,
 					    const float x,
 					    const float y,
 					    const float z) const;
-		float scaled_octave_noise_4d(  const float octaves,
+			float octave_noise_4d(const float octaves,
 					    const float persistence,
 					    const float scale,
-					    const float loBound,
-					    const float hiBound,
 					    const float x,
 					    const float y,
 					    const float z,
 					    const float w) const;
 
-		// Scaled Raw Simplex noise
-		// The result will be between the two parameters passed.
-		float scaled_raw_noise_2d( const float loBound,
-					const float hiBound,
-					const float x,
-					const float y) const;
-		float scaled_raw_noise_3d( const float loBound,
-					const float hiBound,
-					const float x,
-					const float y,
-					const float z) const;
-		float scaled_raw_noise_4d( const float loBound,
-					const float hiBound,
-					const float x,
-					const float y,
-					const float z,
-					const float w) const;
+
+			// Scaled Multi-octave Simplex noise
+			// The result will be between the two parameters passed.
+			float scaled_octave_noise_2d(  const float octaves,
+						    const float persistence,
+						    const float scale,
+						    const float loBound,
+						    const float hiBound,
+						    const float x,
+						    const float y) const;
+			float scaled_octave_noise_3d(  const float octaves,
+						    const float persistence,
+						    const float scale,
+						    const float loBound,
+						    const float hiBound,
+						    const float x,
+						    const float y,
+						    const float z) const;
+			float scaled_octave_noise_4d(  const float octaves,
+						    const float persistence,
+						    const float scale,
+						    const float loBound,
+						    const float hiBound,
+						    const float x,
+						    const float y,
+						    const float z,
+						    const float w) const;
+
+			// Scaled Raw Simplex noise
+			// The result will be between the two parameters passed.
+			float scaled_raw_noise_2d( const float loBound,
+						const float hiBound,
+						const float x,
+						const float y) const;
+			float scaled_raw_noise_3d( const float loBound,
+						const float hiBound,
+						const float x,
+						const float y,
+						const float z) const;
+			float scaled_raw_noise_4d( const float loBound,
+						const float hiBound,
+						const float x,
+						const float y,
+						const float z,
+						const float w) const;
 
 
-		// Raw Simplex noise - a single noise value.
-		float raw_noise_2d(const float x, const float y) const;
-		float raw_noise_3d(const float x, const float y, const float z) const;
-		float raw_noise_4d(const float x, const float y, const float, const float w) const;
-};
-
+			// Raw Simplex noise - a single noise value.
+			float raw_noise_2d(const float x, const float y) const;
+			float raw_noise_3d(const float x, const float y, const float z) const;
+			float raw_noise_4d(const float x, const float y, const float, const float w) const;
+	};
+}
+}
 
 
 // Permutation table.  The same list is repeated twice.

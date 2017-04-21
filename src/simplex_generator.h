@@ -6,9 +6,10 @@
 
 #include "simplex_noise.h"
 
+namespace automata {
 namespace worldgen {
-	const int min_value = 0;
-	const int max_value = 255;
+	const int noise_min_value = 0;
+	const int noise_max_value = 255;
 
 	class cloud_generator {
 		private:
@@ -47,6 +48,7 @@ namespace worldgen {
 	);
 
 	std::vector<std::vector<char>> generate_island(const int width, const int height);
+}
 }
 
 #endif

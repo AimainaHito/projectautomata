@@ -47,16 +47,16 @@ dimension, you can ensure that each gets a unique noise value and they don't
 all look identical.
 */
 
-constexpr int simplex_noise::grad3[12][3];
-constexpr int simplex_noise::grad4[32][4];
-constexpr int simplex_noise::simplex[64][4];
+constexpr int automata::worldgen::simplex_noise::grad3[12][3];
+constexpr int automata::worldgen::simplex_noise::grad4[32][4];
+constexpr int automata::worldgen::simplex_noise::simplex[64][4];
 
-simplex_noise::simplex_noise(int seed) {
+automata::worldgen::simplex_noise::simplex_noise(int seed) {
 	this->seed = seed;
 	generate_permutations(seed);
 }
 
-void simplex_noise::generate_permutations(int seed) {
+void automata::worldgen::simplex_noise::generate_permutations(int seed) {
 	rng.seed(seed);
 	
 	for (int i = 0;i < 256;i++) {
@@ -74,7 +74,7 @@ void simplex_noise::generate_permutations(int seed) {
 	}
 }
 
-int simplex_noise::get_seed() const {
+int automata::worldgen::simplex_noise::get_seed() const {
 	return seed;
 }
 
@@ -82,7 +82,7 @@ int simplex_noise::get_seed() const {
 //
 // For each octave, a higher frequency/lower amplitude function will be added to the original.
 // The higher the persistence [0-1], the more of each succeeding octave will be added.
-float simplex_noise::octave_noise_2d( const float octaves, const float persistence, const float scale, const float x, const float y ) const {
+float automata::worldgen::simplex_noise::octave_noise_2d( const float octaves, const float persistence, const float scale, const float x, const float y ) const {
     float total = 0;
     float frequency = scale;
     float amplitude = 1;
@@ -107,7 +107,7 @@ float simplex_noise::octave_noise_2d( const float octaves, const float persisten
 //
 // For each octave, a higher frequency/lower amplitude function will be added to the original.
 // The higher the persistence [0-1], the more of each succeeding octave will be added.
-float simplex_noise::octave_noise_3d( const float octaves, const float persistence, const float scale, const float x, const float y, const float z ) const {
+float automata::worldgen::simplex_noise::octave_noise_3d( const float octaves, const float persistence, const float scale, const float x, const float y, const float z ) const {
     float total = 0;
     float frequency = scale;
     float amplitude = 1;
@@ -132,7 +132,7 @@ float simplex_noise::octave_noise_3d( const float octaves, const float persisten
 //
 // For each octave, a higher frequency/lower amplitude function will be added to the original.
 // The higher the persistence [0-1], the more of each succeeding octave will be added.
-float simplex_noise::octave_noise_4d( const float octaves, const float persistence, const float scale, const float x, const float y, const float z, const float w ) const {
+float automata::worldgen::simplex_noise::octave_noise_4d( const float octaves, const float persistence, const float scale, const float x, const float y, const float z, const float w ) const {
     float total = 0;
     float frequency = scale;
     float amplitude = 1;
@@ -157,7 +157,7 @@ float simplex_noise::octave_noise_4d( const float octaves, const float persisten
 // 2D Scaled Multi-octave Simplex noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_octave_noise_2d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y ) const {
+float automata::worldgen::simplex_noise::scaled_octave_noise_2d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y ) const {
     return octave_noise_2d(octaves, persistence, scale, x, y) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
@@ -165,14 +165,14 @@ float simplex_noise::scaled_octave_noise_2d( const float octaves, const float pe
 // 3D Scaled Multi-octave Simplex noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_octave_noise_3d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y, const float z ) const {
+float automata::worldgen::simplex_noise::scaled_octave_noise_3d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y, const float z ) const {
     return octave_noise_3d(octaves, persistence, scale, x, y, z) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
 // 4D Scaled Multi-octave Simplex noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_octave_noise_4d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y, const float z, const float w ) const {
+float automata::worldgen::simplex_noise::scaled_octave_noise_4d( const float octaves, const float persistence, const float scale, const float loBound, const float hiBound, const float x, const float y, const float z, const float w ) const {
     return octave_noise_4d(octaves, persistence, scale, x, y, z, w) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
@@ -181,7 +181,7 @@ float simplex_noise::scaled_octave_noise_4d( const float octaves, const float pe
 // 2D Scaled Simplex raw noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_raw_noise_2d( const float loBound, const float hiBound, const float x, const float y ) const {
+float automata::worldgen::simplex_noise::scaled_raw_noise_2d( const float loBound, const float hiBound, const float x, const float y ) const {
     return raw_noise_2d(x, y) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
@@ -189,21 +189,21 @@ float simplex_noise::scaled_raw_noise_2d( const float loBound, const float hiBou
 // 3D Scaled Simplex raw noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_raw_noise_3d( const float loBound, const float hiBound, const float x, const float y, const float z ) const {
+float automata::worldgen::simplex_noise::scaled_raw_noise_3d( const float loBound, const float hiBound, const float x, const float y, const float z ) const {
     return raw_noise_3d(x, y, z) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
 // 4D Scaled Simplex raw noise.
 //
 // Returned value will be between loBound and hiBound.
-float simplex_noise::scaled_raw_noise_4d( const float loBound, const float hiBound, const float x, const float y, const float z, const float w ) const {
+float automata::worldgen::simplex_noise::scaled_raw_noise_4d( const float loBound, const float hiBound, const float x, const float y, const float z, const float w ) const {
     return raw_noise_4d(x, y, z, w) * (hiBound - loBound) / 2 + (hiBound + loBound) / 2;
 }
 
 
 
 // 2D raw Simplex noise
-float simplex_noise::raw_noise_2d( const float x, const float y ) const {
+float automata::worldgen::simplex_noise::raw_noise_2d( const float x, const float y ) const {
     // Noise contributions from the three corners
     float n0, n1, n2;
 
@@ -273,7 +273,7 @@ float simplex_noise::raw_noise_2d( const float x, const float y ) const {
 
 
 // 3D raw Simplex noise
-float simplex_noise::raw_noise_3d( const float x, const float y, const float z ) const {
+float automata::worldgen::simplex_noise::raw_noise_3d( const float x, const float y, const float z ) const {
     float n0, n1, n2, n3; // Noise contributions from the four corners
 
     // Skew the input space to determine which simplex cell we're in
@@ -367,7 +367,7 @@ float simplex_noise::raw_noise_3d( const float x, const float y, const float z )
 
 
 // 4D raw Simplex noise
-float simplex_noise::raw_noise_4d( const float x, const float y, const float z, const float w ) const {
+float automata::worldgen::simplex_noise::raw_noise_4d( const float x, const float y, const float z, const float w ) const {
     // The skewing and unskewing factors are hairy again for the 4D case
     float F4 = (sqrtf(5.0)-1.0)/4.0;
     float G4 = (5.0-sqrtf(5.0))/20.0;
@@ -500,8 +500,8 @@ float simplex_noise::raw_noise_4d( const float x, const float y, const float z, 
 }
 
 
-int simplex_noise::fastfloor( const float x ) const { return x > 0 ? (int) x : (int) x - 1; }
+int automata::worldgen::simplex_noise::fastfloor( const float x ) const { return x > 0 ? (int) x : (int) x - 1; }
 
-float simplex_noise::dot( const int* g, const float x, const float y ) const { return g[0]*x + g[1]*y; }
-float simplex_noise::dot( const int* g, const float x, const float y, const float z ) const { return g[0]*x + g[1]*y + g[2]*z; }
-float simplex_noise::dot( const int* g, const float x, const float y, const float z, const float w ) const { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }
+float automata::worldgen::simplex_noise::dot( const int* g, const float x, const float y ) const { return g[0]*x + g[1]*y; }
+float automata::worldgen::simplex_noise::dot( const int* g, const float x, const float y, const float z ) const { return g[0]*x + g[1]*y + g[2]*z; }
+float automata::worldgen::simplex_noise::dot( const int* g, const float x, const float y, const float z, const float w ) const { return g[0]*x + g[1]*y + g[2]*z + g[3]*w; }

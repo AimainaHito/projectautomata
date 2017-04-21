@@ -5,6 +5,7 @@
 #include <string>
 #include <ncurses.h>
 
+namespace automata {
 class menu {
 	private:
 		WINDOW* win;
@@ -24,5 +25,6 @@ class menu {
 		bool up();
 		unsigned int get_index();
 };
+}
 
 #endif

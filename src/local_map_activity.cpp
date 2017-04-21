@@ -7,8 +7,8 @@
 #include "simplex_generator.h"
 #include "local_map_activity.h"
 
-local_map_activity::local_map_activity(int max_x, int max_y)
-	: activity(max_x, max_y), player_character(player(coord(0,0), coord(0,0), '@')) {
+automata::activities::local_map_activity::local_map_activity(int max_x, int max_y)
+	: activity(max_x, max_y), player_character(player<int, int>(coord<int>(0,0), coord<int>(0,0), '@')) {
 
 	current_x = current_y = 0;
 	x_offset = y_offset = 0;
@@ -21,7 +21,7 @@ local_map_activity::local_map_activity(int max_x, int max_y)
 	char_map = {{' ',0},{'.',1},{',',2},{';',3},{'o',4},{'^',5},{'~',6}};
 }
 
-void local_map_activity::redraw() {
+void automata::activities::local_map_activity::redraw() {
 	for (int y = 0;y < max_y;y++) {
 		for (int x = 0;x < max_x;x++) {
 			mvaddch(y, x, map[y + y_offset][x + x_offset] | COLOR_PAIR(color_map.at(map[y + y_offset][x + x_offset])));
@@ -29,7 +29,7 @@ void local_map_activity::redraw() {
 	}
 }
 
-void local_map_activity::update() {
+void automata::activities::local_map_activity::update() {
 	if (map_moved || player_moved) {
 		if (map_moved) {
 			redraw();
@@ -50,7 +50,7 @@ void local_map_activity::update() {
 					)
 			);
 
-			player_character.set_screen_position(coord(current_x, current_y));
+			player_character.set_screen_position(coord<int>(current_x, current_y));
 		}
 
 
@@ -64,7 +64,7 @@ void local_map_activity::update() {
 	}
 }
 
-void local_map_activity::start(std::shared_ptr<activity_observer> observer) {
+void automata::activities::local_map_activity::start(std::shared_ptr<activity_observer> observer) {
 	this->observer = observer;
 	this->observer->set_current_activity(shared_from_this());
 
@@ -85,12 +85,12 @@ void local_map_activity::start(std::shared_ptr<activity_observer> observer) {
 	refresh();
 }
 
-void local_map_activity::send_key_event(int char_code) {
+void automata::activities::local_map_activity::send_key_event(int char_code) {
 	switch(char_code) {
 		case 'w':
 			if (current_y > 0 && map[player_character.get_position().y - 1][player_character.get_position().x] == ' ') {
 				player_character.move_to(
-					coord(
+					coord<int>(
 						player_character.get_position().x,
 						player_character.get_position().y - 1
 					)
@@ -108,7 +108,7 @@ void local_map_activity::send_key_event(int char_code) {
 		case 's':
 			if (current_y < (max_y - 1) && map[player_character.get_position().y + 1][player_character.get_position().x] == ' ') {
 				player_character.move_to(
-					coord(
+					coord<int>(
 						player_character.get_position().x,
 						player_character.get_position().y + 1
 					)
@@ -127,7 +127,7 @@ void local_map_activity::send_key_event(int char_code) {
 		case 'a':
 			if (current_x > 0 && map[player_character.get_position().y][player_character.get_position().x - 1] == ' ') {
 				player_character.move_to(
-					coord(
+					coord<int>(
 						player_character.get_position().x - 1,
 						player_character.get_position().y
 					)
@@ -146,7 +146,7 @@ void local_map_activity::send_key_event(int char_code) {
 		case 'd':
 			if (current_x < (max_x - 1) && map[player_character.get_position().y][player_character.get_position().x + 1] == ' ') {
 				player_character.move_to(
-					coord(
+					coord<int>(
 						player_character.get_position().x + 1,
 						player_character.get_position().y
 					)
@@ -165,7 +165,7 @@ void local_map_activity::send_key_event(int char_code) {
 	}
 }
 
-void local_map_activity::destroy() {
+void automata::activities::local_map_activity::destroy() {
 	clear();
 	observer = NULL;
 }

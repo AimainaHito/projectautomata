@@ -15,7 +15,6 @@ void initialize_curses() {
 	cbreak();
 	noecho();
 	keypad(stdscr,TRUE);
-	
 }
 
 
@@ -125,8 +124,10 @@ int main() {
 	int char_code;
 	bool running = true;
 
-	std::shared_ptr<loading_activity> transition = std::make_shared<loading_activity>(max_x, max_y);
-	std::shared_ptr<activity_observer> observer = make_observer(std::make_shared<main_menu_activity>(transition, max_x, max_y));
+	std::shared_ptr<automata::activities::loading_activity> transition = std::make_shared<automata::activities::loading_activity>(max_x, max_y);
+	std::shared_ptr<automata::activities::activity_observer> observer = make_observer(
+		std::make_shared<automata::activities::main_menu_activity>(transition, max_x, max_y)
+	);
 
 	std::chrono::steady_clock::time_point previous_time = std::chrono::steady_clock::now();
 	std::chrono::steady_clock::time_point previous_fps_time = std::chrono::steady_clock::now();
