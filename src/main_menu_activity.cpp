@@ -53,16 +53,16 @@ void automata::activities::main_menu_activity::update() {
 		cloud_right = worldgen::generate_cloud2d(max_x,max_y*1.5,cloud_right_generator,cloud_gen_offset);
 
 		for (int y = 0;y < max_y;y++) {
-			for (int x = cloud_movement_offset,x_screen = 0;x < max_x;x++,x_screen++) { //loop until cloud_left x_size
-				char current_char = cloud_left.at(y).at(x);
+			for (int x = cloud_movement_offset,x_screen = 0;x < max_x;x++, x_screen++) { //loop until cloud_left x_size
+				char current_char = cloud_left.at((y * max_x) + x);
 				if (current_char != ' ') {
 					mvaddch(y, x_screen, current_char | COLOR_PAIR(color_map[current_char]));
 				}
 			}
 		}
 		for (int y = 0;y < max_y;y++) {
-			for (int x_screen = cloud_movement_offset,x = 0;x_screen < max_x;x_screen++,x++) {
-				char current_char = cloud_right.at(y).at(x);
+			for (int x_screen = cloud_movement_offset,x = 0;x_screen < max_x;x_screen++, x++) {
+				char current_char = cloud_right.at((y * max_x) + x);
 				if (current_char != ' ') {
 					mvaddch(y, x_screen, current_char | COLOR_PAIR(color_map[current_char]));
 				}

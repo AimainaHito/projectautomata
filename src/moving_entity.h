@@ -4,7 +4,7 @@
 #include "coord.h"
 
 namespace automata {
-template <class map_type, class screen_type>
+template <class map_type, class screen_type=map_type>
 class moving_entity {
 	private:
 		coord<map_type> map_position;

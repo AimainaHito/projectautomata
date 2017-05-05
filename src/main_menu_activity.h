@@ -13,8 +13,8 @@ namespace activities {
 		private:
 			std::shared_ptr<activity> transition;
 			std::vector<std::vector<char>> map;
-			std::vector<std::vector<char>> cloud_left;
-			std::vector<std::vector<char>> cloud_right;
+			std::vector<char> cloud_left;
+			std::vector<char> cloud_right;
 			double cloud_movement_offset, cloud_gen_offset;
 			worldgen::simplex_noise cloud_left_generator, cloud_right_generator;
 			int island_offset_x, island_offset_y;

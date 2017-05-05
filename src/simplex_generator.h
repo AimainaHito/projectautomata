@@ -43,7 +43,7 @@ namespace worldgen {
 		const int width, const int height, const simplex_noise& generator, const double offset
 	);
 
-	std::vector<std::vector<char>> generate_cloud2d(
+	std::vector<char> generate_cloud2d(
 		const int width, const int height, const simplex_noise& generator, const double offset
 	);
 

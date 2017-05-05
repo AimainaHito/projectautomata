@@ -58,8 +58,6 @@ automata::worldgen::cloud_generator::cloud_generator(int width, int height, int 
 
 bool automata::worldgen::cloud_generator::cell_transitions(int x, int y) {
 	return (x < (width - 1) && (transition[y][x + 1] || (x < (width - 2) && transition[y][x + 2])))
-		|| (y < (height - 1) && (transition[y + 1][x] || (y < (height - 2) && transition[y + 2][x])))
-		|| (x > 0 && (transition[y][x - 1] || (x > 1 && transition[y][x - 2])))
 		|| (y > 0 && (transition[y - 1][x] || (y > 1 && transition[y - 2][x])));
 }
 
@@ -158,7 +156,7 @@ std::vector<std::vector<std::vector<char>>> automata::worldgen::generate_cloud3d
 				//euclidean distance:
 				double distance_from_center = sqrt(((center_x - x) * (center_x - x)) + ((center_y - y) * (center_y - y))) / width_to_center;
 
-				double mask = (int) (noise - (distance_from_center * worldgen::noise_max_value));
+				int mask = noise - (distance_from_center * worldgen::noise_max_value);
 
 				char terrain;
 
@@ -183,25 +181,29 @@ std::vector<std::vector<std::vector<char>>> automata::worldgen::generate_cloud3d
 	return cloud_map;
 }
 
-std::vector<std::vector<char>> automata::worldgen::generate_cloud2d(
+std::vector<char> automata::worldgen::generate_cloud2d(
 		const int width, const int height, const worldgen::simplex_noise& generator, const double offset) {
 
 	const float width_to_center = std::min(width, height);
 	const int center_y = (height / 2) - 1;
 	const int center_x = (width / 2) - 1;
 
-	std::vector<std::vector<char>> cloud_map(height);
+	std::vector<char> cloud_map(height * width);
 
 	const double scale_factor = 3.5;
 	const size_t octaves = 4;
 
-	for (int y = 0;y < height;y++) {
-		cloud_map[y] = std::vector<char>(width);
-		for (int x = 0;x < width;x++) {
+	//for (int y = 0;y < height;y++) {
+	//	cloud_map[y] = std::vector<char>(width);
+	//}
+
+	for (int y = 0, index = 0;y < height;y++) {
+		//cloud_map[y] = std::vector<char>(width);
+		for (int x = 0;x < width;x++, index++) {
 			int noise = generator.scaled_octave_noise_2d(
-				octaves,0.5,scale_factor,
-				worldgen::noise_min_value,worldgen::noise_max_value,
-				((double) x / width) + offset,((double) y / height) + offset
+				octaves, 0.5, scale_factor,
+				worldgen::noise_min_value, worldgen::noise_max_value,
+				((double) x / width) + offset, ((double) y / height) + offset
 			);
 
 			//manhatten distance:
@@ -209,7 +211,7 @@ std::vector<std::vector<char>> automata::worldgen::generate_cloud2d(
 			//euclidean distance:
 			double distance_from_center = sqrt(((center_x - x) * (center_x - x)) + ((center_y - y) * (center_y - y))) / width_to_center;
 
-			double mask = (int) (noise - (distance_from_center * worldgen::noise_max_value));
+			int mask = noise - (distance_from_center * worldgen::noise_max_value);
 
 			char terrain;
 
@@ -226,7 +228,7 @@ std::vector<std::vector<char>> automata::worldgen::generate_cloud2d(
 				terrain = '*';
 			}
 
-			cloud_map[y][x] = terrain;
+			cloud_map[index] = terrain;
 		}
 	}
 	

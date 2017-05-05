@@ -8,7 +8,7 @@
 #include "local_map_activity.h"
 
 automata::activities::local_map_activity::local_map_activity(int max_x, int max_y)
-	: activity(max_x, max_y), player_character(player<int, int>(coord<int>(0,0), coord<int>(0,0), '@')) {
+	: activity(max_x, max_y), player_character(player<int>(coord<int>(0,0), coord<int>(0,0), '@')) {
 
 	current_x = current_y = 0;
 	x_offset = y_offset = 0;

@@ -4,7 +4,7 @@
 #include "moving_entity.h"
 
 namespace automata {
-template <class map_type, class screen_type>
+template <class map_type, class screen_type=map_type>
 class player : public moving_entity<map_type, screen_type> {
 	private:
 		map_type x, y;

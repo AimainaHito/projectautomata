@@ -14,7 +14,7 @@ namespace activities {
 			int x_offset, y_offset;
 			int current_x, current_y;
 			bool map_moved, player_moved;
-			player<int, int> player_character;
+			player<int> player_character;
 
 			std::vector<std::vector<char>> map;
 			std::vector<std::vector<bool>> traversable;
